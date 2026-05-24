@@ -8,21 +8,54 @@
     <groupId>dev.tnaumov</groupId>
     <artifactId>java-junit5-maven-archetype</artifactId>
     <version>${revision}</version>
-    <packaging>maven-archetype</packaging>
 
     <name>java-junit5-maven-archetype</name>
-    <description>java-junit5-maven-archetype</description>
+    <description>Maven archetype for a Java 21 + JUnit 5 + Mockito + AssertJ + JaCoCo project</description>
 
     <properties>
         <revision>0.0.1-SNAPSHOT</revision>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+
+        <flatten-plugin.version>1.7.0</flatten-plugin.version>
+        <archetype-plugin.version>3.4.1</archetype-plugin.version>
+        <resources-plugin.version>3.3.1</resources-plugin.version>
+        <gpg-plugin.version>3.2.7</gpg-plugin.version>
+        <publishing-plugin.version>0.7.0</publishing-plugin.version>
     </properties>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Tim Naumov</name>
+            <email>tnaumov.dev@gmail.com</email>
+            <organization>tnaumov.dev</organization>
+            <organizationUrl>https://www.tnaumov.dev</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/tnaumov1/java-junit5-maven-archetype</connection>
+        <developerConnection>scm:git:git@github.com:tnaumov1/java-junit5-maven-archetype</developerConnection>
+        <url>https://github.com/tnaumov1/java-junit5-maven-archetype</url>
+    </scm>
 
     <build>
         <extensions>
             <extension>
                 <groupId>org.apache.maven.archetype</groupId>
                 <artifactId>archetype-packaging</artifactId>
-                <version>3.4.1</version>
+                <version>${archetype-plugin.version}</version>
             </extension>
         </extensions>
 
@@ -34,25 +67,9 @@
 
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <configuration>
-                    <addDefaultExcludes>false</addDefaultExcludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-archetype-plugin</artifactId>
-                <version>3.4.1</version>
-                <configuration>
-                    <useDefaultExcludes>false</useDefaultExcludes>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.7.0</version>
+                <version>${flatten-plugin.version}</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>resolveCiFriendliesOnly</flattenMode>
@@ -74,6 +91,66 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${resources-plugin.version}</version>
+                <configuration>
+                    <addDefaultExcludes>false</addDefaultExcludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-archetype-plugin</artifactId>
+                <version>${archetype-plugin.version}</version>
+                <configuration>
+                    <useDefaultExcludes>false</useDefaultExcludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>central</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${publishing-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>published</waitUntil>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
